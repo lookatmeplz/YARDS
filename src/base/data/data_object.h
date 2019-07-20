@@ -4,7 +4,7 @@
 
 #ifndef YARDS_DATA_OBJECT_H
 #define YARDS_DATA_OBJECT_H
-#include <memory>
+#include <string>
 
 #include "data_type.h"
 
@@ -14,7 +14,7 @@ public:
     virtual ~DataObject() = default;
     virtual int hash() = 0;
     virtual base::DataType type() = 0;
-    virtual const char* str() = 0;
+    virtual std::string str() = 0;
 };
 }  // end of namespace base
 

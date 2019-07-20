@@ -16,7 +16,7 @@ public:
     ~DataInt() override;
     int hash() override;
     base::DataType type() override;
-    const char* str() override;
+    std::string str() override;
 
     int value();
 };
