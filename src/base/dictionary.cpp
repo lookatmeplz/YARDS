@@ -134,6 +134,12 @@ shared_ptr<DataObject> Dictionary::del(const shared_ptr<DataObject>& _key) {
     if (dict.get()[index]) {
         Node * cur = has_same_key(_key, index);
         if (cur) {
+            Node* prev = cur->prev();
+            if (prev)
+                prev->del_next();
+            else
+                dict.get()[index] = nullptr;
+
             return cur->val();
         }
     }

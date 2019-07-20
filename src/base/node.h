@@ -14,6 +14,7 @@ using std::unique_ptr;
 
 class Node {
 private:
+    Node* _prev;
     unique_ptr<Node> _next;
     shared_ptr<DataObject> _key;
     shared_ptr<DataObject> _val;
@@ -23,10 +24,12 @@ public:
 
     shared_ptr<DataObject> key();
     shared_ptr<DataObject> val();
+    Node* prev();
     Node* next();
 
     void set_val(shared_ptr<DataObject> val);
     void set_next(unique_ptr<Node>& _next);
+    void del_next();
 };
 }
 
