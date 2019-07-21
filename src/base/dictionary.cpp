@@ -1,5 +1,3 @@
-#include <memory>
-
 //
 // Created by user on 2019-07-16.
 //
@@ -34,13 +32,38 @@ Node* Dictionary::has_same_key(const shared_ptr<DataObject> &_key, int index) {
     while (cur) {
         if (cur->key()->type() == _key->type()) {
             switch (cur->key()->type()) {
-                case INTEGER:
-                    auto* p1 = static_cast<DataInt *>(cur->key().get());
-                    auto* p2 = static_cast<DataInt *>(_key.get());
+                case INTEGER: {
+                    auto *p1 = static_cast<DataInt *>(cur->key().get());
+                    auto *p2 = static_cast<DataInt *>(_key.get());
                     if (p1->value() == p2->value()) {
                         return cur;
                     }
                     break;
+                }
+                case FLOAT: {
+                    auto *p1 = static_cast<DataFloat *>(cur->key().get());
+                    auto *p2 = static_cast<DataFloat *>(_key.get());
+                    if (p1->value() == p2->value()) {
+                        return cur;
+                    }
+                    break;
+                }
+                case BOOLEAN:{
+                    auto *p1 = static_cast<DataBoolean *>(cur->key().get());
+                    auto *p2 = static_cast<DataBoolean *>(_key.get());
+                    if (p1->value() == p2->value()) {
+                        return cur;
+                    }
+                    break;
+                }
+                case STRING:{
+                    auto *p1 = static_cast<DataString *>(cur->key().get());
+                    auto *p2 = static_cast<DataString *>(_key.get());
+                    if (p1->value() == p2->value()) {
+                        return cur;
+                    }
+                    break;
+                }
             }
         }
         cur = cur->next();

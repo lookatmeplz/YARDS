@@ -7,6 +7,10 @@
 
 #include "data/data_object.h"
 #include "data/data_int.h"
+#include "data/data_float.h"
+#include "data/data_string.h"
+#include "data/data_boolean.h"
+
 #include "node.h"
 
 namespace base {
