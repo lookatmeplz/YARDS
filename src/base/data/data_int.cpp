@@ -24,8 +24,8 @@ DataType DataInt::type() {
     return INTEGER;
 }
 
-const char *DataInt::str() {
-    return std::to_string(val).c_str();
+std::string DataInt::str() {
+    return std::to_string(val);
 }
 
 }  // end of namespace base

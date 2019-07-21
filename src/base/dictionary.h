@@ -7,10 +7,13 @@
 
 #include "data/data_object.h"
 #include "data/data_int.h"
+#include "node.h"
 
 namespace base {
 
 using std::shared_ptr;
+using std::unique_ptr;
+
 class Dictionary {
 private:
     static const int DEFAULT_SIZE;
@@ -18,10 +21,9 @@ private:
     int size;
     int count;
 
-    shared_ptr<shared_ptr<DataObject>> key;
-    shared_ptr<shared_ptr<DataObject>> val;
+    shared_ptr<unique_ptr<Node>> dict;
 
-    bool has_same_key(const shared_ptr<DataObject> &_key, int index);
+    Node* has_same_key(const shared_ptr<DataObject> &_key, int index);
     void resize();
 
 public:
