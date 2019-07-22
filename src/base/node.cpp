@@ -24,7 +24,7 @@ shared_ptr<DataObject> Node::val() {
     return _val;
 }
 
-void Node::set_next(unique_ptr<Node>& next) {
+void Node::set_next(unique_ptr<Node> next) {
     _next->_prev = this;
     _next = std::move(next);
 }
@@ -41,8 +41,12 @@ Node* Node::next() {
     return _next.get();
 }
 
-void Node::del_next() {
-    _next = std::move(_next->_next);
+unique_ptr<Node> Node::del() {
+    if (!_next)
+        return nullptr;
+
+    _next->_prev = _prev;
+    return std::move(_next);
 }
 
 }
