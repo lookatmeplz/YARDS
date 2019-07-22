@@ -28,8 +28,8 @@ public:
     Node* next();
 
     void set_val(shared_ptr<DataObject> val);
-    void set_next(unique_ptr<Node>& _next);
-    void del_next();
+    void set_next(unique_ptr<Node> _next);
+    unique_ptr<Node> del();
 };
 }
 

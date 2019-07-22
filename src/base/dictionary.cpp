@@ -96,7 +96,7 @@ shared_ptr<DataObject> Dictionary::set(const shared_ptr<DataObject>& _key, const
     }
 
     std::unique_ptr<Node> ptr(new Node(_key, _val));
-    ptr->set_next(dict.get()[index]);
+    ptr->set_next(std::move(dict.get()[index]));
     dict.get()[index] = std::move(ptr);
     ++count;
 
@@ -121,7 +121,7 @@ shared_ptr<DataObject> Dictionary::add(const shared_ptr<DataObject>& _key, const
     }
 
     std::unique_ptr<Node> ptr(new Node(_key, _val));
-    ptr->set_next(dict.get()[index]);
+    ptr->set_next(std::move(dict.get()[index]));
     dict.get()[index] = std::move(ptr);
     ++count;
 
@@ -159,9 +159,9 @@ shared_ptr<DataObject> Dictionary::del(const shared_ptr<DataObject>& _key) {
         if (cur) {
             Node* prev = cur->prev();
             if (prev)
-                prev->del_next();
+                prev->set_next(cur->del());
             else
-                dict.get()[index] = nullptr;
+                dict.get()[index] = cur->del();
 
             return cur->val();
         }
