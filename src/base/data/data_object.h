@@ -4,6 +4,8 @@
 
 #ifndef YARDS_DATA_OBJECT_H
 #define YARDS_DATA_OBJECT_H
+
+#include <memory>
 #include <string>
 
 #include "data_type.h"

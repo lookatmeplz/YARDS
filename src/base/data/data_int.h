@@ -4,6 +4,7 @@
 
 #ifndef YARDS_DATA_INT_H
 #define YARDS_DATA_INT_H
+
 #include "data_object.h"
 
 namespace base {

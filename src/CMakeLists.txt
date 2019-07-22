@@ -13,6 +13,6 @@ add_executable(yards ${SOURCE_FILES})
 # Link libraries
 target_link_libraries(
         yards
-        data_int
+        data_pack
         dict
 )

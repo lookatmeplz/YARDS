@@ -13,7 +13,8 @@ DataInt::DataInt(int _val)
 DataInt::~DataInt() = default;;
 
 int DataInt::hash() {
-    return val;
+    int hash = val*97;
+    return hash >= 0 ? hash : -hash;
 }
 
 int DataInt::value() {
