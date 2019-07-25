@@ -29,6 +29,8 @@ public:
 
     void set_val(shared_ptr<DataObject> val);
     void set_next(unique_ptr<Node> _next);
+    void set_prev(Node *prev);
+
     unique_ptr<Node> del();
 };
 }
