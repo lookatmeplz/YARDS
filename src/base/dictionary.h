@@ -28,7 +28,7 @@ private:
     shared_ptr<unique_ptr<Node>> dict;
 
     Node* has_same_key(const shared_ptr<DataObject> &_key, int index);
-    void resize();
+    void resize(int _size);
 
 public:
     explicit Dictionary(int _size);
