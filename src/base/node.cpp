@@ -25,8 +25,11 @@ shared_ptr<DataObject> Node::val() {
 }
 
 void Node::set_next(unique_ptr<Node> next) {
-    _next->_prev = this;
     _next = std::move(next);
+}
+
+void Node::set_prev(Node* prev) {
+    _prev = prev;
 }
 
 void Node::set_val(shared_ptr<DataObject> val) {
