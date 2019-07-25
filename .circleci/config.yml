@@ -1,0 +1,26 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: gcc:latest
+  working_directory: ~/yards-test
+    steps:
+      - run:
+          name: Install CMake
+          command: |
+              apt-get -y -q update
+              apt-get -y -q install cmake
+      - checkout
+      - run:
+          name: Create Build Files
+          command: |
+              cmake -H. -Bbuild
+      - run:
+          name: Create Binary Files
+          command: |
+              cmake --build build
+      - run:
+          name: Run unit tests
+          command: |
+              ./build/unit_test
