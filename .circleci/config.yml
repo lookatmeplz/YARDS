@@ -1,10 +1,9 @@
 version: 2
-
 jobs:
   build:
     docker:
       - image: gcc:latest
-  working_directory: ~/yards-test
+    working_directory: ~/yards-test
     steps:
       - run:
           name: Install CMake
