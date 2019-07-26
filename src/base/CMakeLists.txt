@@ -5,7 +5,7 @@ project(base)
 add_subdirectory(data)
 
 # Add Library
-add_library(
+add_library(dict
         dictionary.cpp
         node.cpp
 )

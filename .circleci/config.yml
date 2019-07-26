@@ -1,16 +1,10 @@
 version: 2
-
 jobs:
   build:
     docker:
-      - image: gcc:latest
-  working_directory: ~/yards-test
+      - image: rikorose/gcc-cmake:latest
+    working_directory: ~/yards-test
     steps:
-      - run:
-          name: Install CMake
-          command: |
-              apt-get -y -q update
-              apt-get -y -q install cmake
       - checkout
       - run:
           name: Create Build Files
@@ -23,4 +17,4 @@ jobs:
       - run:
           name: Run unit tests
           command: |
-              ./build/unit_test
+              ./build/test_unit
