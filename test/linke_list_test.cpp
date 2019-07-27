@@ -3,7 +3,7 @@
 //
 #include "gtest/gtest.h"
 
-#include "../src/base/node.h"
+#include "../src/base/struct/node.h"
 #include "../src/base/data/data_int.h"
 
 namespace {

@@ -33,13 +33,13 @@ add_subdirectory(src)
 file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/test/*.cpp)
 
 if(TEST_SRC_FILES)
-    add_executable(test_unit ${TEST_SRC_FILES} test/linke_list_test.cpp)
+    add_executable(test_unit ${TEST_SRC_FILES})
     target_link_libraries(
             test_unit
             gtest
             gtest_main
             data_pack
-            dict
+            struct
     )
     add_test(UnitTests test_unit)
 endif()

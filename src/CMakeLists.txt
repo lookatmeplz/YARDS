@@ -15,5 +15,5 @@ add_executable(yards ${SOURCE_FILES})
 target_link_libraries(
         yards
         data_pack
-        dict
+        struct
 )

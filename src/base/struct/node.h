@@ -5,7 +5,7 @@
 #ifndef YARDS_NODE_H
 #define YARDS_NODE_H
 
-#include "data/data_object.h"
+#include "../data/data_object.h"
 
 namespace base {
 
@@ -32,7 +32,8 @@ public:
     void set_prev(Node *prev);
 
     unique_ptr<Node> del();
-};
-}
+
+}; // end of class Node
+} // end of namespace base
 
 #endif //YARDS_NODE_H

@@ -24,8 +24,8 @@ public:
     base::DataType type() override;
     std::string str() override;
     int value();
-};
-}  // end of namespace base
 
+}; // end of class DataBoolean
+} // end of namespace base
 
 #endif //YARDS_DATA_BOOLEAN_H

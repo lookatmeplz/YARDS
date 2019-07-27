@@ -19,7 +19,8 @@ public:
     std::string str() override;
 
     float value();
-};
-}  // end of namespace base
+
+}; // end of class DataFloat
+} // end of namespace base
 
 #endif //YARDS_DATA_FLOAT_H
