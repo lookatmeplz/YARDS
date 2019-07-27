@@ -5,7 +5,7 @@
 #ifndef YARDS_CLIENT_H
 #define YARDS_CLIENT_H
 
-#include <cygwin/in.h>
+#include <netinet/in.h>
 #include <string>
 
 namespace net {
@@ -24,8 +24,10 @@ protected:
 public:
     explicit Client(std::string ip=DEFAULT_IP_ADDR, int port=DEFAULT_PORT);
     bool conn();
+    void disconn();
+    bool isConn();
     std::string query(std::string command);
-}; // end of class client
+}; // end of class Client
 } // end of namespace net
 
 #endif //YARDS_CLIENT_H
