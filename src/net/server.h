@@ -5,7 +5,7 @@
 #ifndef YARDS_SERVER_H
 #define YARDS_SERVER_H
 
-#include <cygwin/in.h>
+#include <netinet/in.h>
 #include <string>
 
 namespace net {
@@ -30,7 +30,7 @@ public:
     void start();
     void stop();
     bool isRun();
-}; // end of class server
+}; // end of class Server
 } // end of namespace net
 
 #endif //YARDS_SERVER_H

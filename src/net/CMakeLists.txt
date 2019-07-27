@@ -3,10 +3,10 @@ project(net)
 
 # Add Library
 add_library(net_server
-        Server.cpp
-        Server.h
+        server.cpp
+        server.h
 )
 add_library(net_client
-        Client.cpp
-        Client.h
+        client.cpp
+        client.h
 )

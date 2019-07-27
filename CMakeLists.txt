@@ -40,6 +40,8 @@ if(TEST_SRC_FILES)
             gtest_main
             data_pack
             struct
+            net_server
+            net_client
     )
     add_test(UnitTests test_unit)
 endif()

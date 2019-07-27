@@ -1,16 +1,15 @@
-#include <utility>
-
 //
 // Created by user on 2019-07-22.
 //
 
-#include "Client.h"
+#include "client.h"
 
 #include <arpa/inet.h>
 #include <iostream>
 #include <cstring>
 #include <vector>
 #include <thread>
+#include <unistd.h>
 
 #define MAX_BUF_SIZE 0x1000
 
@@ -57,6 +56,15 @@ bool Client::conn() {
     return true;
 }
 
+void Client::disconn() {
+    is_conn = false;
+    close(sock);
+}
+
+bool Client::isConn() {
+    return is_conn;
+}
+
 /**
  * query to db
  * @param command query to request to db
@@ -64,7 +72,7 @@ bool Client::conn() {
  */
 std::string Client::query(std::string command) {
     if (!is_conn) {
-        return std::string("server connection is required.");
+        return std::string("Server connection is required.");
     }
 
     if (send(sock, command.c_str(), command.size(), 0) == -1) {
@@ -74,11 +82,12 @@ std::string Client::query(std::string command) {
     std::vector<char> buffer(MAX_BUF_SIZE);
     std::string rcv;
 
-    if (recv(sock, &buffer[0], buffer.size(), 0) == -1) {
+    int recv_len = 0;
+    if ((recv_len = recv(sock, &buffer[0], buffer.size(), 0)) == -1) {
         return std::string("recv() Error!");
     }
 
-    rcv.append( buffer.begin(), buffer.end() );
+    rcv.append( buffer.begin(), buffer.begin()+recv_len );
 
     return rcv;
 }

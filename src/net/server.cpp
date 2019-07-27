@@ -1,10 +1,8 @@
-#include <utility>
-
 //
 // Created by user on 2019-07-22.
 //
 
-#include "Server.h"
+#include "server.h"
 
 #include <arpa/inet.h>
 #include <iostream>
@@ -29,7 +27,6 @@ Server::Server(std::string ip, int port)
   : serv_ip(std::move(ip)),
     serv_port(port),
     is_run(false) {
-
 }
 
 /**
@@ -114,10 +111,13 @@ void Server::socketHandler(Server *server, int csock) {
         std::vector<char> buffer(MAX_BUF_SIZE);
         std::string rcv;
 
-        if (recv(csock, &buffer[0], buffer.size(), 0) == -1) {
-            printf("recv() Error, disconnect client fd %d\n", csock);
+        int recv_len = 0;
+        if ((recv_len = recv(csock, &buffer[0], buffer.size(), 0)) == -1) {
+            printf("recv() Error, disconnect Client fd %d\n", csock);
             break;
         }
+
+        if (recv_len == 0) continue;
 
         rcv.append( buffer.cbegin(), buffer.cend() );
 
