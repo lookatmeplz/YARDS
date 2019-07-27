@@ -7,17 +7,17 @@
 
 namespace base {
 enum DataType {
+    // Primitive Data Type
     INTEGER,
     FLOAT,
     BOOLEAN,
     STRING,
 
+    // Structure
     LIST,
     TUPLE,
     DICT,
-
-    CUSTOM
-};
-}  // end of namespace base
+}; // end of enum DataType
+} // end of namespace base
 
 #endif //YARDS_DATA_TYPE_H

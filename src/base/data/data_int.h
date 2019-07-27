@@ -20,7 +20,8 @@ public:
     std::string str() override;
 
     int value();
-};
-}  // end of namespace base
+
+}; // end of class DataInt
+} // end of namespace base
 
 #endif //YARDS_DATA_INT_H

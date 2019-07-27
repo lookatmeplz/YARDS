@@ -52,4 +52,4 @@ unique_ptr<Node> Node::del() {
     return std::move(_next);
 }
 
-}
+} // end of namespace base

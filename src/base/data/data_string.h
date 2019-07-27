@@ -19,7 +19,8 @@ public:
     std::string str() override;
 
     std::string value();
-};
-}  // end of namespace base
+
+}; // end of class DataString
+} // end of namespace base
 
 #endif //YARDS_DATA_STRING_H

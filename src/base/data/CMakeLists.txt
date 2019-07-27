@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4)
 project(data)
 
 # Add Library
-add_library(data_pack
+add_library(data_pack STATIC
         data_int.cpp
         data_boolean.cpp
         data_float.cpp

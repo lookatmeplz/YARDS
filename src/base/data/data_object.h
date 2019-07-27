@@ -15,9 +15,10 @@ class DataObject {
 public:
     virtual ~DataObject() = default;
     virtual int hash() = 0;
-    virtual base::DataType type() = 0;
+    virtual DataType type() = 0;
     virtual std::string str() = 0;
-};
-}  // end of namespace base
+
+}; // end of class DataObject
+} // end of namespace base
 
 #endif //YARDS_DATA_OBJECT_H

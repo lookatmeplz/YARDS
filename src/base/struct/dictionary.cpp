@@ -3,6 +3,8 @@
 //
 
 #include "dictionary.h"
+#include "list.h"
+#include "tuple.h"
 
 namespace base {
 
@@ -35,35 +37,45 @@ Node* Dictionary::has_same_key(const shared_ptr<DataObject> &_key, int index) {
                 case INTEGER: {
                     auto *p1 = static_cast<DataInt *>(cur->key().get());
                     auto *p2 = static_cast<DataInt *>(_key.get());
-                    if (p1->value() == p2->value()) {
+                    if (p1->value() == p2->value())
                         return cur;
-                    }
+
                     break;
                 }
                 case FLOAT: {
                     auto *p1 = static_cast<DataFloat *>(cur->key().get());
                     auto *p2 = static_cast<DataFloat *>(_key.get());
-                    if (p1->value() == p2->value()) {
+                    if (p1->value() == p2->value())
                         return cur;
-                    }
+
                     break;
                 }
                 case BOOLEAN:{
                     auto *p1 = static_cast<DataBoolean *>(cur->key().get());
                     auto *p2 = static_cast<DataBoolean *>(_key.get());
-                    if (p1->value() == p2->value()) {
+                    if (p1->value() == p2->value())
                         return cur;
-                    }
+
                     break;
                 }
                 case STRING:{
                     auto *p1 = static_cast<DataString *>(cur->key().get());
                     auto *p2 = static_cast<DataString *>(_key.get());
-                    if (p1->value() == p2->value()) {
+                    if (p1->value() == p2->value())
                         return cur;
-                    }
+
                     break;
                 }
+                case LIST:
+                case DICT:
+                    return nullptr;
+                case TUPLE:
+                    auto *p1 = static_cast<Tuple *>(cur->key().get());
+                    auto *p2 = static_cast<Tuple *>(_key.get());
+                    if (p1->str() == p2->str())
+                        return cur;
+
+                    break;
             }
         }
         cur = cur->next();
@@ -85,7 +97,7 @@ shared_ptr<DataObject> Dictionary::set(const shared_ptr<DataObject>& _key, const
     int index = _key->hash() % size;
 
     if (!dict.get()[index]) {
-        std::unique_ptr<Node> ptr(new Node(_key, _val));
+        unique_ptr<Node> ptr(new Node(_key, _val));
         dict.get()[index] = std::move(ptr);
         ++count;
 
@@ -98,7 +110,7 @@ shared_ptr<DataObject> Dictionary::set(const shared_ptr<DataObject>& _key, const
         return _val;
     }
 
-    std::unique_ptr<Node> ptr(new Node(_key, _val));
+    unique_ptr<Node> ptr(new Node(_key, _val));
 
     dict.get()[index]->set_prev(ptr.get());
     ptr->set_next(std::move(dict.get()[index]));
@@ -109,19 +121,19 @@ shared_ptr<DataObject> Dictionary::set(const shared_ptr<DataObject>& _key, const
 }
 
 /**
- * Add key-value in dictionary if value is already in dictionary it wrapped by list
+ * Append key-value in dictionary if value is already in dictionary it wrapped by list
  * @param _key key mapped value
  * @param _val value to store
  * @return value to check
  */
-shared_ptr<DataObject> Dictionary::add(const shared_ptr<DataObject>& _key, const shared_ptr<DataObject>& _val) {
+shared_ptr<DataObject> Dictionary::append(const shared_ptr<DataObject>& _key, const shared_ptr<DataObject>& _val) {
     if (count >= 0.8 * size)
         resize(2*size);
 
     int index = _key->hash() % size;
 
     if (!dict.get()[index]) {
-        std::unique_ptr<Node> ptr(new Node(_key, _val));
+        unique_ptr<Node> ptr(new Node(_key, _val));
         dict.get()[index] = std::move(ptr);
         ++count;
 
@@ -130,11 +142,20 @@ shared_ptr<DataObject> Dictionary::add(const shared_ptr<DataObject>& _key, const
 
     Node * cur = has_same_key(_key, index);
     if (cur) {
-        // TODO : Add value to List
-        return nullptr;
+        if (cur->val()->type() == LIST) {
+            auto *list = static_cast<List *>(cur->val().get());
+            list->append(_val);
+        } else {
+            shared_ptr<List> p(new List());
+            p->append(cur->val());
+            p->append(_val);
+            cur->set_val(p);
+        }
+
+        return cur->val();
     }
 
-    std::unique_ptr<Node> ptr(new Node(_key, _val));
+    unique_ptr<Node> ptr(new Node(_key, _val));
 
     dict.get()[index]->set_prev(ptr.get());
     ptr->set_next(std::move(dict.get()[index]));
@@ -222,6 +243,30 @@ void Dictionary::resize(int _size) {
         dict = std::move(d);
         size = _size;
     }
+}
+
+int Dictionary::hash() {
+    return -1;
+}
+
+DataType Dictionary::type() {
+    return DICT;
+}
+
+std::string Dictionary::str() {
+    std::string str = "{";
+    for (int i = 0; i < size; ++i) {
+        Node * cur = dict.get()[i].get();
+        while (cur) {
+            str += cur->key()->str();
+            str += ": ";
+            str += cur->val()->str();
+            str += ", ";
+            cur = cur->next();
+        }
+    }
+    str += "}";
+    return str;
 }
 
 } // end of namespace base
