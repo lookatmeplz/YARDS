@@ -7,6 +7,8 @@
 #include "data_object.h"
 
 namespace base {
+using namespace std;
+
 class DataBoolean : public DataObject {
 private:
     explicit DataBoolean(int _val);
@@ -17,8 +19,8 @@ private:
 
     Type val;
 public:
-    static const DataBoolean* const True;
-    static const DataBoolean* const False;
+    static shared_ptr<DataBoolean> const True;
+    static shared_ptr<DataBoolean> const False;
     ~DataBoolean() override;
     int hash() override;
     base::DataType type() override;
