@@ -11,7 +11,6 @@ namespace base {
 class DataInt : public DataObject {
 private:
     int val;
-    const base::DataType _type;
 public:
     explicit DataInt(int _val);
     ~DataInt() override;

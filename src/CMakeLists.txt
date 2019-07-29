@@ -14,6 +14,7 @@ add_executable(yards ${SOURCE_FILES})
 # Link libraries
 target_link_libraries(
         yards
+        atomic
         data_pack
         struct
         net_server
