@@ -7,8 +7,7 @@
 namespace base {
 
 DataInt::DataInt(int _val)
-  : val(_val),
-    _type(DataType::INTEGER) {}
+  : val(_val) {}
 
 DataInt::~DataInt() = default;;
 

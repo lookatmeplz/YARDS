@@ -13,6 +13,11 @@ enum DataType {
     BOOLEAN,
     STRING,
 
+    // Atomic Type
+    ATOMIC_INTEGER,
+    ATOMIC_FLOAT,
+    ATOMIC_BOOLEAN,
+
     // Structure
     LIST,
     TUPLE,

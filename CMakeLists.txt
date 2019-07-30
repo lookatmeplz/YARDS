@@ -38,6 +38,7 @@ if(TEST_SRC_FILES)
             test_unit
             gtest
             gtest_main
+            atomic
             data_pack
             struct
             net_server
