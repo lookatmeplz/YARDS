@@ -27,4 +27,19 @@ std::string DataFloat::str() {
     return std::to_string(val);
 }
 
+float DataFloat::set(float _val) {
+    val = _val;
+    return val;
+}
+
+float DataFloat::add(float _val) {
+    val += _val;
+    return val;
+}
+
+float DataFloat::mul(float _val) {
+    val *= _val;
+    return val;
+}
+
 }  // end of namespace base

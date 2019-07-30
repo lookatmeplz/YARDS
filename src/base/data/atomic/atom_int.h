@@ -22,6 +22,9 @@ public:
 
     int value();
 
+    int set(int _val);
+    int add(int _val);
+
 }; // end of class AtomicInt
 } // end of namespace base
 

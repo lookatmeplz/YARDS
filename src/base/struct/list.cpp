@@ -7,12 +7,12 @@
 namespace base {
 const int List::DEFAULT_SIZE = 16;
 
-List::List(int _size)
-  : size(_size),
+List::List(int _s)
+  : _size(_s),
     count(0) {
 
     auto deleter = [](shared_ptr<DataObject>* p){delete[] p;};
-    shared_ptr<shared_ptr<DataObject>> l(new shared_ptr<DataObject>[size], deleter);
+    shared_ptr<shared_ptr<DataObject>> l(new shared_ptr<DataObject>[_size], deleter);
     list = std::move(l);
 }
 
@@ -29,8 +29,8 @@ shared_ptr<DataObject> List::set(int index, const shared_ptr<DataObject> &_val) 
 }
 
 shared_ptr<DataObject> List::append(const shared_ptr<DataObject> &_val) {
-    if (count >= size)
-        resize(2*size);
+    if (count >= _size)
+        resize(2*_size);
 
     list.get()[count++] = _val;
     ++count;
@@ -50,26 +50,26 @@ shared_ptr<DataObject> List::del(int index) {
         return nullptr;
 
     shared_ptr<DataObject> ptr = std::move(list.get()[index]);
-    for (int i = index+1; i < size; ++i)
+    for (int i = index+1; i < _size; ++i)
         list.get()[i-1] = std::move(list.get()[i]);
     --count;
 
-    if (count < size/4)
-        resize(size/2);
+    if (count < _size/4)
+        resize(_size/2);
     return ptr;
 }
 
-void List::resize(int _size) {
+void List::resize(int _s) {
     auto deleter = [](shared_ptr<DataObject> *p) {delete[] p;};
-    shared_ptr<shared_ptr<DataObject>> l(new shared_ptr<DataObject>[_size], deleter);
+    shared_ptr<shared_ptr<DataObject>> l(new shared_ptr<DataObject>[_s], deleter);
 
-    int min = _size <= count ? _size : count;
+    int min = _s <= count ? _s : count;
     if (l) {
         for (int i = 0; i < min; ++i)
             l.get()[i] = std::move(list.get()[i]);
 
         list = std::move(l);
-        size = _size;
+        _size = _s;
     }
 }
 
@@ -89,6 +89,10 @@ std::string List::str() {
     }
     str += "]";
     return str;
+}
+
+int List::size() {
+    return count;
 }
 
 }

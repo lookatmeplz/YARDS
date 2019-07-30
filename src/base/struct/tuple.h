@@ -12,15 +12,20 @@ using std::shared_ptr;
 using std::unique_ptr;
 class Tuple : public DataObject {
 private:
-    int size;
-    shared_ptr<unique_ptr<DataObject>> tuple;
+    int _size;
+    shared_ptr<shared_ptr<DataObject>> tuple;
 
 public:
-    explicit Tuple(shared_ptr<unique_ptr<DataObject>>& _tuple, int _size);
+    explicit Tuple(shared_ptr<shared_ptr<DataObject>>& _tuple, int _size);
     ~Tuple() override;
     int hash() override;
     base::DataType type() override;
     std::string str() override;
+
+    shared_ptr<DataObject> get(int index);
+
+    int size();
+
 }; // end of class Tuple
 } // end of namespace base
 

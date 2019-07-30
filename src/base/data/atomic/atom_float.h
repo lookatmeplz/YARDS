@@ -22,6 +22,10 @@ public:
 
     float value();
 
+    float set(float _val);
+
+    // Todo: Should be implemented Add, Set
+
 }; // end of class AtomicFloat
 } // end of namespace base
 
