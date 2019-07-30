@@ -7,8 +7,12 @@
 
 #include <netinet/in.h>
 #include <string>
+#include "../cmd/mngr.h"
+#include "../cmd/user.h"
 
 namespace net {
+
+using namespace cmd;
 
 class Server {
 protected:
@@ -21,12 +25,15 @@ protected:
     static const std::string DEFAULT_IP_ADDR;
     static const int DEFAULT_PORT;
 
+    Mngr *mngr;
+
     void create();
     int getAccept();
-    static void socketHandler(Server *server, int csock);
+    static void socketHandler(Mngr *m, Server *server, int csock);
 
 public:
     explicit Server(std::string ip=DEFAULT_IP_ADDR, int port=DEFAULT_PORT);
+    void setMngr(Mngr *m);
     void start();
     void stop();
     bool isRun();

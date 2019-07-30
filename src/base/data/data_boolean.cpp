@@ -5,9 +5,10 @@
 #include "data_boolean.h"
 
 namespace base {
+using namespace std;
 
-const DataBoolean* const DataBoolean::True = new DataBoolean(1);
-const DataBoolean* const DataBoolean::False = new DataBoolean(0);
+const shared_ptr<DataBoolean> DataBoolean::True(new DataBoolean(1));
+const shared_ptr<DataBoolean> DataBoolean::False(new DataBoolean(0));
 
 DataBoolean::DataBoolean(int _val) {
     val = _val ? Type::TRUE : Type::FALSE;
