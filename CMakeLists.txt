@@ -42,6 +42,7 @@ if(TEST_SRC_FILES)
             struct
             net_server
             net_client
+            cmd
     )
     add_test(UnitTests test_unit)
 endif()
