@@ -20,6 +20,8 @@ public:
 
     std::string value();
 
+    std::string set(std::string _val);
+
 }; // end of class DataString
 } // end of namespace base
 

@@ -20,6 +20,11 @@ public:
 
     float value();
 
+    float set(float _val);
+
+    float add(float _val);
+    float mul(float _val);
+
 }; // end of class DataFloat
 } // end of namespace base
 

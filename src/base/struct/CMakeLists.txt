@@ -8,3 +8,9 @@ add_library(struct STATIC
         dictionary.cpp
         node.cpp
 )
+
+# Link libraries
+target_link_libraries(
+        struct
+        data_pack
+)

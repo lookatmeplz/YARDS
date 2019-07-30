@@ -31,4 +31,9 @@ std::string DataString::str() {
     return val;
 }
 
+std::string DataString::set(std::string _val) {
+    val = std::move(_val);
+    return val;
+}
+
 }  // end of namespace base

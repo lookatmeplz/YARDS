@@ -69,13 +69,17 @@ Node* Dictionary::has_same_key(const shared_ptr<DataObject> &_key, int index) {
                 case LIST:
                 case DICT:
                     return nullptr;
-                case TUPLE:
+                case TUPLE: {
                     auto *p1 = static_cast<Tuple *>(cur->key().get());
                     auto *p2 = static_cast<Tuple *>(_key.get());
-                    if (p1->str() == p2->str())
-                        return cur;
-
+                    int len = p1->size();
+                    if (len != p2->size())
+                        continue;
+                    for (int i = 0; i < len; ++i) {
+                        // TODO: Should check Tuple
+                    }
                     break;
+                }
             }
         }
         cur = cur->next();

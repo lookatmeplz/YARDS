@@ -20,6 +20,11 @@ public:
 
     int value();
 
+    int set(int _val);
+
+    int add(int _val);
+    int mul(int _val);
+
 }; // end of class DataInt
 } // end of namespace base
 

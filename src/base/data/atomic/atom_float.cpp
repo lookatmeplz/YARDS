@@ -27,4 +27,9 @@ std::string AtomicFloat::str() {
     return std::to_string(val);
 }
 
+float AtomicFloat::set(float _val) {
+    val = _val;
+    return val;
+}
+
 }  // end of namespace base

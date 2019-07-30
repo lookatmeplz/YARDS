@@ -27,4 +27,14 @@ std::string AtomicInt::str() {
     return std::to_string(val);
 }
 
+int AtomicInt::set(int _val) {
+    val.store(_val);
+    return val;
+}
+
+int AtomicInt::add(int _val) {
+    val.fetch_add(_val);
+    return val;
+}
+
 } // end of namespace base

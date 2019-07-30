@@ -21,7 +21,7 @@ public:
     std::string str() override;
 
     int value();
-
+    // Todo: Should be implemented not op
 }; // end of class AtomicBoolean
 } // end of namespace base
 

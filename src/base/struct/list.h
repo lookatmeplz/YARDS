@@ -14,7 +14,7 @@ class List : public DataObject {
 private:
     static const int DEFAULT_SIZE;
 
-    int size;
+    int _size;
     int count;
 
     shared_ptr<shared_ptr<DataObject>> list;
@@ -22,12 +22,14 @@ private:
     void resize(int _size);
 
 public:
-    explicit List(int _size);
+    explicit List(int _s);
     List();
     ~List() override;
     int hash() override;
     base::DataType type() override;
     std::string str() override;
+
+    int size();
 
     shared_ptr<DataObject> set(int index, const shared_ptr<DataObject>& _val);
     shared_ptr<DataObject> append(const shared_ptr<DataObject>& _val);
