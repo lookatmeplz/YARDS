@@ -8,6 +8,7 @@
 #include <tuple>
 #include <vector>
 #include <memory>
+#include <map>
 #include "../base/data/data_object.h"
 #include "../base/data/data_string.h"
 #include "../base/data/data_int.h"
@@ -24,11 +25,14 @@ using namespace std;
 using namespace base;
 
 namespace Parser {
+    static map<char, char> m;
+
+    void init();
     tuple<ParserResultType , vector<shared_ptr<DataObject>>> parse(string cmd);
     shared_ptr<DataObject> createData(string raw);
     DataType maybeType(char ch);
     bool isString(string raw);
-    bool isInt(string raw);
+    bool isInt(const string& raw);
     bool isFloat(string raw);
     bool isBool(string raw);
     bool isDict(string raw);

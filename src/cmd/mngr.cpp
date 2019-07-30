@@ -12,6 +12,7 @@ namespace cmd {
  */
 Mngr::Mngr() {
     dod = new Dictionary();
+    Parser::init();
 }
 
 /**

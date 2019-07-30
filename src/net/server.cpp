@@ -52,7 +52,7 @@ void Server::start() {
 
     do {
         if ((csock = getAccept()) != -1) {
-            threads.emplace_back(new std::thread(socketHandler, mngr, this, csock));
+            threads.emplace_back(new std::thread(socketHandler, this, csock));
         }
     } while ( is_run );
 }
@@ -116,7 +116,7 @@ int Server::getAccept() {
  * recv and process requests from clients
  * @param csock client socket
  */
-void Server::socketHandler(Mngr *m, Server *server, int csock) {
+void Server::socketHandler(Server *server, int csock) {
     shared_ptr<User> u = make_shared<User>(csock);
     do {
         std::vector<char> buffer(MAX_BUF_SIZE);
@@ -132,7 +132,7 @@ void Server::socketHandler(Mngr *m, Server *server, int csock) {
 
         rcv.append( buffer.cbegin(), buffer.cbegin()+recv_len );
 
-        m->queryHandler(u, rcv);
+        server->mngr->queryHandler(u, rcv);
 
         // TODO: send the result of query
 

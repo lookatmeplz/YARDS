@@ -8,6 +8,7 @@
 namespace cmd {
 
 enum ParserResultType{
+    ERR,
     USE,
     SET,
     GET,
