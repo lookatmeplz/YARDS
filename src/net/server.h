@@ -15,7 +15,7 @@ namespace net {
 using namespace cmd;
 
 class Server {
-protected:
+private:
     bool is_run;
     int serv_sock;
     sockaddr_in serv_addr, clnt_addr;
@@ -29,7 +29,7 @@ protected:
 
     void create();
     int getAccept();
-    static void socketHandler(Mngr *m, Server *server, int csock);
+    static void socketHandler(Server *server, int csock);
 
 public:
     explicit Server(std::string ip=DEFAULT_IP_ADDR, int port=DEFAULT_PORT);

@@ -10,11 +10,11 @@
 namespace cmd {
 
 class User {
-
-public:
+private:
     int user_fd;
     std::string db_name;
 
+public:
     User(int fd);
     void setDB(std::string name);
 };

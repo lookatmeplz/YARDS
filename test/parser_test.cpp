@@ -14,6 +14,8 @@ using namespace std;
 using namespace cmd;
 
 TEST(ParserTest, parser_test) {
+    Parser::init();
+
     tuple<ParserResultType , vector<shared_ptr<DataObject>>> re;
     re = Parser::parse("set 'key' 'asdf d'");
 
