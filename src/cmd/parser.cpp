@@ -6,12 +6,19 @@
 #include <iterator>
 #include <sstream>
 #include <algorithm>
-#include <map>
 #include <iostream>
 
 namespace cmd {
 
 using namespace std;
+
+void Parser::init() {
+    m.insert(make_pair('\'', '\''));
+    m.insert(make_pair('\"', '\"'));
+    m.insert(make_pair('{', '}'));
+    m.insert(make_pair('[', ']'));
+    m.insert(make_pair('(', ')'));
+}
 
 /**
  * parse the query
@@ -19,12 +26,8 @@ using namespace std;
  * @return instruction type, arguments
  */
 tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cmd) {
-    map<char, char>m;
-    m.insert(make_pair('\'', '\''));
-    m.insert(make_pair('\"', '\"'));
-    m.insert(make_pair('{', '}'));
-    m.insert(make_pair('[', ']'));
-    m.insert(make_pair('(', ')'));
+    ParserResultType op;
+    vector<shared_ptr<DataObject>> desc;
 
     vector<string> wordsVector;
     int begin = 0;
@@ -32,16 +35,34 @@ tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cm
 
     for (int i=0; i<cmd.size(); i++) {
         char token;
-        if (cmd[i] == '\'' || cmd[i] == '\"' || cmd[i] == '{' || cmd[i] == '[' || cmd[i] == '(') {
+        if (cmd[i] == '\'' || cmd[i] == '\"') {
+            token = m[cmd[i]];
+            begin = i;
+            for (int j=i+1; j<cmd.size(); j++) {
+                if (cmd[j] == token && cmd[j-1] != '\\') {
+                    end = j-begin+1;
+                    wordsVector.push_back(cmd.substr(begin, end));
+                    i = j;
+                    break;
+                }
+            }
+        } else if (cmd[i] == '{' || cmd[i] == '[' || cmd[i] == '(') {
+            int cnt = 1;
             token = m[cmd[i]];
             begin = i;
             for (int j=i+1; j<cmd.size(); j++) {
                 if (cmd[j] == token) {
-                    end = j-begin+1;
-                    wordsVector.push_back(cmd.substr(begin, end));
-                    begin += end;
-                    i = j;
-                    break;
+                    cnt -= 1;
+                    if (cnt == 0) {
+                        end = j - begin + 1;
+                        wordsVector.push_back(cmd.substr(begin, end));
+                        i = j;
+                        break;
+                    } else if (cnt < 0) {
+                        return make_tuple(ERR, desc);
+                    }
+                } else if (cmd[j] == cmd[i]) {
+                    cnt += 1;
                 }
             }
         } else if (cmd[i] != ' ') {
@@ -54,12 +75,8 @@ tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cm
                 end = j-begin+1;
             }
             wordsVector.push_back(cmd.substr(begin, end));
-            begin += end;
         }
     }
-
-    ParserResultType op;
-    vector<shared_ptr<DataObject>> desc;
 
     transform(wordsVector[0].begin(), wordsVector[0].end(), wordsVector[0].begin(), ::tolower);
     if (wordsVector[0] == "set") {
@@ -79,18 +96,18 @@ tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cm
 shared_ptr<DataObject> Parser::createData(string raw) {
     shared_ptr<DataObject> data;
 
-    DataType dt;
     switch (maybeType(raw[0])) {
         case STRING:
             if (isString(raw)) {
                 data = make_shared<DataString>(raw);
             }
             break;
+        case FLOAT:
         case INTEGER:
             if (isInt(raw)) {
-                data = make_shared<DataInt>(std::strtol(raw.c_str(), 0, 10));
+                data = make_shared<DataInt>(std::strtol(raw.c_str(), nullptr, 10));
             } else if (isFloat(raw)) {
-                data = make_shared<DataFloat>(std::strtod(raw.c_str(), 0));
+                data = make_shared<DataFloat>(std::strtod(raw.c_str(), nullptr));
             }
             break;
         case BOOLEAN:
@@ -101,18 +118,22 @@ shared_ptr<DataObject> Parser::createData(string raw) {
                     data = DataBoolean::False;
                 }
             }
+            break;
         case DICT:
             if (isDict(raw)) {
                 // TODO: create dict object
             }
+            break;
         case LIST:
             if (isList(raw)) {
                 // TODO: create list object
             }
+            break;
         case TUPLE:
             if (isTuple(raw)) {
                 // TODO: create tuple object
             }
+            break;
     }
 
     return data;
@@ -169,7 +190,7 @@ bool Parser::isString(string raw) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isInt(string raw) {
+bool Parser::isInt(const string& raw) {
     for (char i : raw) {
         if (!isdigit(i)) {
             return false;
