@@ -6,7 +6,7 @@
 
 namespace base {
 
-Tuple::Tuple(shared_ptr<shared_ptr<DataObject>>& _tuple, int _s)
+Tuple::Tuple(shared_ptr<shared_ptr<DataObject>> _tuple, int _s)
   : _size(_s) {
     tuple = std::move(_tuple);
 }
@@ -31,12 +31,12 @@ base::DataType Tuple::type() {
 }
 
 std::string Tuple::str() {
-    std::string str = "[";
+    std::string str = "(";
     for (int i = 0; i < _size; ++i) {
         str += tuple.get()[i]->str();
         str += ", ";
     }
-    str += "]";
+    str += ")";
     return str;
 }
 

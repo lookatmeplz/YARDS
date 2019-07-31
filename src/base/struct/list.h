@@ -35,6 +35,7 @@ public:
     shared_ptr<DataObject> append(const shared_ptr<DataObject>& _val);
     shared_ptr<DataObject> get(int index);
     shared_ptr<DataObject> del(int index);
+    shared_ptr<shared_ptr<DataObject>> get();
 
 }; // end of class List
 } // end of namespace base

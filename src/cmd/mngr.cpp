@@ -12,7 +12,7 @@ namespace cmd {
  */
 Mngr::Mngr() {
     dod = new Dictionary();
-    Parser::init();
+    parser::init();
 }
 
 /**
@@ -30,7 +30,7 @@ void Mngr::setDod(Dictionary *d) {
  */
 void Mngr::queryHandler(shared_ptr<User> u, std::string cmd) {
 
-    tuple<ParserResultType , vector<shared_ptr<DataObject>>> re = Parser::parse(cmd);
+    tuple<ParserResultType , vector<shared_ptr<DataObject>>> re = parser::parse(std::move(cmd), ' ');
     // TODO: handle the parse result
 }
 

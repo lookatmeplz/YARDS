@@ -16,7 +16,7 @@ private:
     shared_ptr<shared_ptr<DataObject>> tuple;
 
 public:
-    explicit Tuple(shared_ptr<shared_ptr<DataObject>>& _tuple, int _size);
+    explicit Tuple(shared_ptr<shared_ptr<DataObject>> _tuple, int _size);
     ~Tuple() override;
     int hash() override;
     base::DataType type() override;

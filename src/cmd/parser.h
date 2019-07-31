@@ -24,11 +24,12 @@ namespace cmd {
 using namespace std;
 using namespace base;
 
-namespace Parser {
+namespace parser {
     static map<char, char> m;
 
     void init();
-    tuple<ParserResultType , vector<shared_ptr<DataObject>>> parse(string cmd);
+    tuple<ParserResultType , vector<shared_ptr<DataObject>>> parse(const string& cmd, char sep);
+    vector<string> parseWithSep(const string& cmd, char sep);
     shared_ptr<DataObject> createData(string raw);
     DataType maybeType(char ch);
     bool isString(string raw);

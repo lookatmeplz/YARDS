@@ -12,7 +12,7 @@ namespace cmd {
 
 using namespace std;
 
-void Parser::init() {
+void parser::init() {
     m.insert(make_pair('\'', '\''));
     m.insert(make_pair('\"', '\"'));
     m.insert(make_pair('{', '}'));
@@ -25,10 +25,34 @@ void Parser::init() {
  * @param cmd query to parsed
  * @return instruction type, arguments
  */
-tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cmd) {
+tuple<ParserResultType, vector<shared_ptr<DataObject>>> parser::parse(const string& cmd, char sep) {
     ParserResultType op;
     vector<shared_ptr<DataObject>> desc;
+    vector<string> wordsVector = std::move(parseWithSep(cmd, sep));
 
+    transform(wordsVector[0].begin(), wordsVector[0].end(), wordsVector[0].begin(), ::tolower);
+    if (wordsVector[0] == "set") {
+        if (wordsVector.size() != 3) {
+            op = ERR;
+        } else {
+            op = SET;
+            desc.push_back(createData(wordsVector[1]));
+            desc.push_back(createData(wordsVector[2]));
+        }
+    } else {
+        op = ERR;
+    }
+
+    return make_tuple(op, desc);
+}
+
+/**
+ * parse the query with seperator
+ * @param cmd query to parsed
+ * @param sep seperator
+ * @return seperated strings
+ */
+vector<string> parser::parseWithSep(const string& cmd, char sep) {
     vector<string> wordsVector;
     int begin = 0;
     int end = 0;
@@ -37,11 +61,13 @@ tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cm
         char token;
         if (cmd[i] == '\'' || cmd[i] == '\"') {
             token = m[cmd[i]];
-            begin = i;
+            if (end == 0) {
+                begin = i;
+                end = 1;
+            }
             for (int j=i+1; j<cmd.size(); j++) {
                 if (cmd[j] == token && cmd[j-1] != '\\') {
                     end = j-begin+1;
-                    wordsVector.push_back(cmd.substr(begin, end));
                     i = j;
                     break;
                 }
@@ -49,43 +75,94 @@ tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cm
         } else if (cmd[i] == '{' || cmd[i] == '[' || cmd[i] == '(') {
             int cnt = 1;
             token = m[cmd[i]];
-            begin = i;
+            if (end == 0) {
+                begin = i;
+                end = 1;
+            }
             for (int j=i+1; j<cmd.size(); j++) {
                 if (cmd[j] == token) {
                     cnt -= 1;
                     if (cnt == 0) {
                         end = j - begin + 1;
-                        wordsVector.push_back(cmd.substr(begin, end));
                         i = j;
                         break;
                     } else if (cnt < 0) {
-                        return make_tuple(ERR, desc);
+                        vector<string> err;
+                        return err;
                     }
                 } else if (cmd[j] == cmd[i]) {
                     cnt += 1;
                 }
             }
-        } else if (cmd[i] != ' ') {
-            begin = i;
+        } else if (cmd[i] == ' ' && end == 0) {
+            continue;
+        } else if (cmd[i] != sep) {
+            if (end == 0) {
+                begin = i;
+                end = 1;
+            }
             for (int j=i+1; j<cmd.size(); j++) {
-                if (cmd[j] == ' ') {
+                if (cmd[j] == sep) {
+                    for (int k=begin; k<end; k++) {
+                        if (cmd[k] == ' ') {
+                            begin += 1;
+                        } else {
+                            break;
+                        }
+                    }
+                    for (int k=begin+end-1; k>=begin; k--) {
+                        if (cmd[k] == ' ') {
+                            end -= 1;
+                        } else {
+                            break;
+                        }
+                    }
+                    wordsVector.push_back(cmd.substr(begin, end));
+                    end = 0;
                     i = j;
                     break;
                 }
                 end = j-begin+1;
             }
+        } else if (cmd[i] == sep && end > 0) {
+            for (int k=begin; k<end; k++) {
+                if (cmd[k] == ' ') {
+                    begin += 1;
+                } else {
+                    break;
+                }
+            }
+            for (int k=begin+end-1; k>=begin; k--) {
+                if (cmd[k] == ' ') {
+                    end -= 1;
+                } else {
+                    break;
+                }
+            }
             wordsVector.push_back(cmd.substr(begin, end));
+            end = 0;
         }
     }
 
-    transform(wordsVector[0].begin(), wordsVector[0].end(), wordsVector[0].begin(), ::tolower);
-    if (wordsVector[0] == "set") {
-        op = SET;
-        desc.push_back(createData(wordsVector[1]));
-        desc.push_back(createData(wordsVector[2]));
+    if (end > 0) {
+        for (int k=begin; k<end; k++) {
+            if (cmd[k] == ' ') {
+                begin += 1;
+            } else {
+                break;
+            }
+        }
+        for (int k=begin+end-1; k>=begin; k--) {
+            if (cmd[k] == ' ') {
+                end -= 1;
+            } else {
+                break;
+            }
+        }
+        wordsVector.push_back(cmd.substr(begin, end));
     }
 
-    return make_tuple(op, desc);
+    return wordsVector;
 }
 
 /**
@@ -93,50 +170,80 @@ tuple<ParserResultType , vector<shared_ptr<DataObject>>> Parser::parse(string cm
  * @param raw data to be created as an object
  * @return data object for raw
  */
-shared_ptr<DataObject> Parser::createData(string raw) {
-    shared_ptr<DataObject> data;
+shared_ptr<DataObject> parser::createData(string raw) {
 
     switch (maybeType(raw[0])) {
         case STRING:
             if (isString(raw)) {
-                data = make_shared<DataString>(raw);
+                shared_ptr<DataString> str_data = make_shared<DataString>(raw);
+                return str_data;
             }
             break;
-        case FLOAT:
         case INTEGER:
             if (isInt(raw)) {
-                data = make_shared<DataInt>(std::strtol(raw.c_str(), nullptr, 10));
+                shared_ptr<DataInt> int_data;
+                int_data = make_shared<DataInt>(std::strtol(raw.c_str(), nullptr, 10));
+                return int_data;
             } else if (isFloat(raw)) {
-                data = make_shared<DataFloat>(std::strtod(raw.c_str(), nullptr));
+                shared_ptr<DataFloat> float_data;
+                float_data = make_shared<DataFloat>(std::strtod(raw.c_str(), nullptr));
+                return float_data;
             }
             break;
         case BOOLEAN:
             if (isBool(raw)) {
+                shared_ptr<DataBoolean> bool_data;
                 if (raw[1] == 'T' || raw[1] == 't') {
-                    data = DataBoolean::True;
+                    bool_data = DataBoolean::True;
                 } else if (raw[1] == 'F' || raw[1] == 'f') {
-                    data = DataBoolean::False;
+                    bool_data = DataBoolean::False;
                 }
+                return bool_data;
             }
             break;
         case DICT:
             if (isDict(raw)) {
-                // TODO: create dict object
+                shared_ptr<Dictionary> dict = make_shared<Dictionary>();
+                raw = raw.substr(1, raw.size()-2);
+                vector<string> blocks = parseWithSep(raw, ',');
+                for (auto & block : blocks) {
+                    vector<string> kv = parseWithSep(block, ':');
+                    if (kv.size() != 2) {
+                        return nullptr;
+                    }
+                    shared_ptr<DataObject> key = createData(kv[0]);
+                    shared_ptr<DataObject> val = createData(kv[1]);
+                    dict->set(key, val);
+                }
+                return dict;
             }
             break;
         case LIST:
             if (isList(raw)) {
-                // TODO: create list object
+                shared_ptr<List> list = make_shared<List>();
+                raw = raw.substr(1, raw.size()-2);
+                vector<string> blocks = parseWithSep(raw, ',');
+                for (auto & block : blocks) {
+                    list->append(createData(block));
+                }
+                return list;
             }
             break;
         case TUPLE:
             if (isTuple(raw)) {
-                // TODO: create tuple object
+                raw = raw.substr(1, raw.size()-2);
+                vector<string> blocks = parseWithSep(raw, ',');
+                shared_ptr<List> list = make_shared<List>();
+                for (auto & block : blocks) {
+                    list->append(createData(block));
+                }
+                shared_ptr<Tuple> tuple = make_shared<Tuple>(list->get(), list->size());
+                return tuple;
             }
             break;
     }
 
-    return data;
+    return nullptr;
 }
 
 /**
@@ -144,7 +251,7 @@ shared_ptr<DataObject> Parser::createData(string raw) {
  * @param ch the first character
  * @return possible data type
  */
-DataType Parser::maybeType(char ch) {
+DataType parser::maybeType(char ch) {
     if (ch == '\'' || ch == '\"') {
         return STRING;
     } else if (ch == '{') {
@@ -165,7 +272,7 @@ DataType Parser::maybeType(char ch) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isString(string raw) {
+bool parser::isString(string raw) {
     char token;
 
     if (raw[0] == '\'' || raw[0] == '\"') {
@@ -190,7 +297,7 @@ bool Parser::isString(string raw) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isInt(const string& raw) {
+bool parser::isInt(const string& raw) {
     for (char i : raw) {
         if (!isdigit(i)) {
             return false;
@@ -205,7 +312,7 @@ bool Parser::isInt(const string& raw) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isFloat(string raw) {
+bool parser::isFloat(string raw) {
     bool dot = false;
 
     for (int i=0; i<raw.size(); i++) {
@@ -227,7 +334,7 @@ bool Parser::isFloat(string raw) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isBool(string raw) {
+bool parser::isBool(string raw) {
     if (raw.size() != 2) {
         return false;
     }
@@ -246,12 +353,12 @@ bool Parser::isBool(string raw) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isDict(string raw) {
+bool parser::isDict(string raw) {
     if (raw.front() != '{' || raw.back() != '}') {
         return false;
     }
 
-    // TODO: check valid dict format
+    return true;
 }
 
 /**
@@ -259,12 +366,12 @@ bool Parser::isDict(string raw) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isList(std::string raw) {
+bool parser::isList(std::string raw) {
     if (raw.front() != '[' || raw.back() != ']') {
         return false;
     }
 
-    // TODO: check valid list format
+    return true;
 }
 
 /**
@@ -272,12 +379,12 @@ bool Parser::isList(std::string raw) {
  * @param raw data
  * @return is valid
  */
-bool Parser::isTuple(std::string raw) {
+bool parser::isTuple(std::string raw) {
     if (raw.front() != '(' || raw.back() != ')') {
         return false;
     }
 
-    // TODO: check valid tuple format
+    return true;
 }
 
 } // end of namespace cmd
