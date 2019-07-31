@@ -33,7 +33,6 @@ shared_ptr<DataObject> List::append(const shared_ptr<DataObject> &_val) {
         resize(2*_size);
 
     list.get()[count++] = _val;
-    ++count;
 
     return _val;
 }
@@ -93,6 +92,10 @@ std::string List::str() {
 
 int List::size() {
     return count;
+}
+
+shared_ptr<shared_ptr<DataObject>> List::get() {
+    return list;
 }
 
 }
