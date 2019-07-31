@@ -10,4 +10,5 @@ add_library(data_pack STATIC
         data_boolean.cpp
         data_float.cpp
         data_string.cpp
+        data_type.cpp
 )

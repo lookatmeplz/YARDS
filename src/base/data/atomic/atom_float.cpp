@@ -6,8 +6,9 @@
 
 namespace base {
 
-AtomicFloat::AtomicFloat(float _val)
-        : val(_val) {}
+AtomicFloat::AtomicFloat(float _val) {
+    val.store(_val);
+}
 
 AtomicFloat::~AtomicFloat() = default;;
 
