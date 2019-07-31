@@ -5,8 +5,9 @@
 #include "atom_boolean.h"
 namespace base {
 
-AtomicBoolean::AtomicBoolean(int _val)
-  : val(_val != 0) {}
+AtomicBoolean::AtomicBoolean(int _val) {
+    val.store(_val != 0);
+}
 
 AtomicBoolean::~AtomicBoolean() = default;
 

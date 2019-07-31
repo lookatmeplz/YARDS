@@ -6,7 +6,9 @@
 
 namespace base {
 
-AtomicInt::AtomicInt(int _val) : val(_val) {}
+AtomicInt::AtomicInt(int _val) {
+    val.store(_val);
+}
 
 AtomicInt::~AtomicInt() = default;
 

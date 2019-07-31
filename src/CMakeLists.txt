@@ -8,6 +8,7 @@ set(SOURCE_FILES main.cpp)
 add_subdirectory(base)
 add_subdirectory(net)
 add_subdirectory(cmd)
+add_subdirectory(db)
 
 # Add Executable SOURCE FILE
 add_executable(yards ${SOURCE_FILES})
@@ -20,5 +21,6 @@ target_link_libraries(
         struct
         net_server
         net_client
+        db
         cmd
 )

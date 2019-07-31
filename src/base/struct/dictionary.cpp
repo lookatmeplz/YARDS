@@ -3,19 +3,17 @@
 //
 
 #include "dictionary.h"
-#include "list.h"
-#include "tuple.h"
 
 namespace base {
 
 const int Dictionary::DEFAULT_SIZE = 16;
 
-Dictionary::Dictionary(int _size)
-  : size(_size),
-    count(0) {
+Dictionary::Dictionary(int _s)
+  : _size(_s),
+    _count(0) {
 
     auto deleter = [](unique_ptr<Node>* p){delete[] p;};
-    shared_ptr<unique_ptr<Node>> d(new unique_ptr<Node>[size], deleter);
+    shared_ptr<unique_ptr<Node>> d(new unique_ptr<Node>[_size], deleter);
     dict = std::move(d);
 }
 
@@ -95,15 +93,15 @@ Node* Dictionary::has_same_key(const shared_ptr<DataObject> &_key, int index) {
  * @return value to check
  */
 shared_ptr<DataObject> Dictionary::set(const shared_ptr<DataObject>& _key, const shared_ptr<DataObject>& _val) {
-    if (count >= 0.8 * size)
-        resize(2*size);
+    if (_count >= 0.8 * _size)
+        resize(2*_size);
 
-    int index = _key->hash() % size;
+    int index = _key->hash() % _size;
 
     if (!dict.get()[index]) {
         unique_ptr<Node> ptr(new Node(_key, _val));
         dict.get()[index] = std::move(ptr);
-        ++count;
+        ++_count;
 
         return _val;
     }
@@ -119,7 +117,7 @@ shared_ptr<DataObject> Dictionary::set(const shared_ptr<DataObject>& _key, const
     dict.get()[index]->set_prev(ptr.get());
     ptr->set_next(std::move(dict.get()[index]));
     dict.get()[index] = std::move(ptr);
-    ++count;
+    ++_count;
 
     return _val;
 }
@@ -131,15 +129,15 @@ shared_ptr<DataObject> Dictionary::set(const shared_ptr<DataObject>& _key, const
  * @return value to check
  */
 shared_ptr<DataObject> Dictionary::append(const shared_ptr<DataObject>& _key, const shared_ptr<DataObject>& _val) {
-    if (count >= 0.8 * size)
-        resize(2*size);
+    if (_count >= 0.8 * _size)
+        resize(2*_size);
 
-    int index = _key->hash() % size;
+    int index = _key->hash() % _size;
 
     if (!dict.get()[index]) {
         unique_ptr<Node> ptr(new Node(_key, _val));
         dict.get()[index] = std::move(ptr);
-        ++count;
+        ++_count;
 
         return _val;
     }
@@ -164,7 +162,7 @@ shared_ptr<DataObject> Dictionary::append(const shared_ptr<DataObject>& _key, co
     dict.get()[index]->set_prev(ptr.get());
     ptr->set_next(std::move(dict.get()[index]));
     dict.get()[index] = std::move(ptr);
-    ++count;
+    ++_count;
 
     return _val;
 }
@@ -175,7 +173,7 @@ shared_ptr<DataObject> Dictionary::append(const shared_ptr<DataObject>& _key, co
  * @return value in dictionary
  */
 shared_ptr<DataObject> Dictionary::get(const shared_ptr<DataObject>& _key) {
-    int index = _key->hash() % size;
+    int index = _key->hash() % _size;
 
     if (dict.get()[index]) {
         Node * cur = has_same_key(_key, index);
@@ -192,10 +190,10 @@ shared_ptr<DataObject> Dictionary::get(const shared_ptr<DataObject>& _key) {
  * @return value in dictionary
  */
 shared_ptr<DataObject> Dictionary::del(const shared_ptr<DataObject>& _key) {
-    if (count < 0.2 * size)
-        resize(size/2);
+    if (_count < 0.2 * _size)
+        resize(_size/2);
 
-    int index = _key->hash() % size;
+    int index = _key->hash() % _size;
     shared_ptr<DataObject> ptr;
 
     if (dict.get()[index]) {
@@ -219,14 +217,14 @@ shared_ptr<DataObject> Dictionary::del(const shared_ptr<DataObject>& _key) {
  * Resize dictionary
  * @param _size size for resize
  */
-void Dictionary::resize(int _size) {
+void Dictionary::resize(int _s) {
     auto deleter = [](unique_ptr<Node> *p) {delete[] p;};
-    shared_ptr<unique_ptr<Node>> d(new unique_ptr<Node>[_size], deleter);
+    shared_ptr<unique_ptr<Node>> d(new unique_ptr<Node>[_s], deleter);
 
     if (d) {
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < _size; ++i) {
             while (dict.get()[i]) {
-                int new_index = dict.get()[i]->key()->hash() % _size;
+                int new_index = dict.get()[i]->key()->hash() % _s;
                 if (!d.get()[new_index]) {
                     d.get()[new_index] = std::move(dict.get()[i]);
                     dict.get()[i] = d.get()[new_index]->del();
@@ -240,12 +238,12 @@ void Dictionary::resize(int _size) {
             }
         }
 
-        for (int i = 0; i < _size; ++i)
+        for (int i = 0; i < _s; ++i)
             if (d.get()[i])
                 d.get()[i]->set_prev(nullptr);
         
         dict = std::move(d);
-        size = _size;
+        _size = _s;
     }
 }
 
@@ -259,7 +257,7 @@ DataType Dictionary::type() {
 
 std::string Dictionary::str() {
     std::string str = "{";
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < _size; ++i) {
         Node * cur = dict.get()[i].get();
         while (cur) {
             str += cur->key()->str();
@@ -272,5 +270,28 @@ std::string Dictionary::str() {
     str += "}";
     return str;
 }
+
+int Dictionary::size() {
+    return _size;
+}
+
+int Dictionary::count() {
+    return _count;
+}
+
+shared_ptr<Node*> Dictionary::get_all() {
+    auto deleter = [](Node** p){delete[] p;};
+    shared_ptr<Node*> d(new Node*[_count], deleter);
+    int index = 0;
+    for (int i = 0; i < _size; ++i) {
+        Node * cur = dict.get()[i].get();
+        while (cur) {
+            d.get()[index++] = cur;
+            cur = cur->next();
+        }
+    }
+    return d;
+}
+
 
 } // end of namespace base

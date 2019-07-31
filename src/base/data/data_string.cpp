@@ -9,7 +9,7 @@ namespace base {
 DataString::DataString(std::string _val)
         : val(std::move(_val)) {}
 
-DataString::~DataString() = default;;
+DataString::~DataString() = default;
 
 int DataString::hash() {
     int hash = 0;

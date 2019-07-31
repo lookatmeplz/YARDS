@@ -11,6 +11,8 @@
 #include "../data/data_string.h"
 #include "../data/data_boolean.h"
 
+#include "list.h"
+#include "tuple.h"
 #include "node.h"
 
 namespace base {
@@ -22,8 +24,8 @@ class Dictionary : public DataObject {
 private:
     static const int DEFAULT_SIZE;
 
-    int size;
-    int count;
+    int _size;
+    int _count;
 
     shared_ptr<unique_ptr<Node>> dict;
 
@@ -37,6 +39,11 @@ public:
     int hash() override;
     base::DataType type() override;
     std::string str() override;
+
+    int size();
+    int count();
+
+    shared_ptr<Node*> get_all();
 
     shared_ptr<DataObject> set(const shared_ptr<DataObject>& _key, const shared_ptr<DataObject>& _val);
     shared_ptr<DataObject> append(const shared_ptr<DataObject>& _key, const shared_ptr<DataObject>& _val);

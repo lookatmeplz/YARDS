@@ -23,6 +23,9 @@ enum DataType {
     TUPLE,
     DICT,
 }; // end of enum DataType
+
+int get_obj_size(DataType type);
+
 } // end of namespace base
 
 #endif //YARDS_DATA_TYPE_H
