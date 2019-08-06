@@ -12,7 +12,7 @@ DataFloat::DataFloat(float _val)
 DataFloat::~DataFloat() = default;;
 
 int DataFloat::hash() {
-    return (int)val*37;
+    return (int)(val*37);
 }
 
 float DataFloat::value() {
